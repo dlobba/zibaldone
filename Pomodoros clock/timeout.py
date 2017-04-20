@@ -1,4 +1,3 @@
-import tkinter as tk
 import datetime
 import logging
 
@@ -10,7 +9,7 @@ class Timeout:
         """The constructor can be initialized directly with a timeout expressed in seconds."""
         self.precision = 100000 # set precision to 100000 microseconds
         self.timeout = timeout
-        self.timeout_datetime # will keep the datetime of the timeout once set
+        self.timeout_datetime = None # will keep the datetime of the timeout once set
 
         
     def set_new_timeout (self, \
@@ -20,7 +19,7 @@ class Timeout:
                          seconds = 0):
         """Set a new timeout, can be set with different precision
     (days, hours, minutes, seconds)."""
-
+        
         self.timeout = days * 86400 + \
                        hours * 3600 + \
                        minutes * 60 + \
