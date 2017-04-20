@@ -10,6 +10,7 @@ class Timeout:
         """The constructor can be initialized directly with a timeout expressed in seconds."""
         self.precision = 100000 # set precision to 100000 microseconds
         self.timeout = timeout
+        self.timeout_datetime # will keep the datetime of the timeout once set
 
         
     def set_new_timeout (self, \
@@ -26,9 +27,9 @@ class Timeout:
                        seconds
         
 
-    def update (self, timeout_datetime):
+    def update (self):
         if self.timeout:
-            delta = timeout_datetime - datetime.datetime.now ()
+            delta = self.timeout_datetime - datetime.datetime.now ()
             
             if delta.days <= 0 \
                and delta.seconds <= 0 \
@@ -36,17 +37,13 @@ class Timeout:
                 self.timeout = 0
                 # logging.debug ("Time out...")
                 print ("Time out...")
-                return 1
+                return False
                 
             else:
                 # logging.debug ("Time elapsed " + str (delta))
                 print ("Time elapsed " + str (delta))
-                return 0
+                return delta
             
-
-    def flow (self):
-        timeout_datetime = datetime.datetime.now () + \
-                  datetime.timedelta (seconds = self.timeout)
-        time_out = False
-        while not time_out:
-            time_out = self.update (timeout_datetime)
+    def activate_timeout (self):
+        self.timeout_datetime = datetime.datetime.now () + \
+                                datetime.timedelta (seconds = self.timeout)
