@@ -24,28 +24,35 @@ class TimeoutUI:
         self.inputs["entry_time"] = tk.StringVar ()
         self.inputs["entry_time"].set ("D:H:M:s")
         self.entry_time = tk.Entry (width = 25, textvariable = self.inputs["entry_time"])
-        # self.entry_time.insert (tk.INSERT
         self.entry_time.pack (side = tk.LEFT)
 
-        self.button_ok_time = tk.Button (text = "Ok", callback = activate_timeout ())
+        self.button_ok_time = tk.Button (text = "Ok", command = self.activate_timeout)
         self.button_ok_time.pack (side = tk.RIGHT)
         
 
-    def get_time_entry ():
+    def get_time_entry (self):
 
-        tmp = self.inputs["entry_time"].split (":")
+        tmp = self.inputs["entry_time"].get().split (":")
 
-        # if len (tmp) > 4
+        if len (tmp) > 4:
+            return None
+
+        tmp.reverse ()
+        timeout = [0] * 4
         
+        for el in range (0, len(tmp)):
+            timeout[el] = int(tmp[el])
+
+        return timeout[3], timeout[2], timeout[1], timeout[0]
         
         
 
     def activate_timeout (self):
 
-        self.control_time_entry ()
-        
+        days, hours, minutes, seconds = self.get_time_entry ()
+
         self.timeout = timeout.Timeout ()
-        self.timeout.set_new_timeout (minutes = 25)
+        self.timeout.set_new_timeout (days, hours, minutes, seconds)
         self.timeout.activate_timeout ()
         self.update_clock ()
 
