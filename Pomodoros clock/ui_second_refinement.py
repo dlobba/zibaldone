@@ -12,29 +12,30 @@ class TimeoutUI:
                       # dynamic variables (stringvar and so on)
         
         self.container = tk.Frame (parent)
-        self.container.pack ()
+        self.container.grid ()
         self.parent = parent
         self.clock_format = "%D:%H:s"
         self._job = None # define the timer job
 
         self.label_clock = tk.Label (font = "Verdana 64", text = "D:H:m:s")
-        self.label_clock.pack ()
+        self.label_clock.grid (row = 0, column = 0, columnspan = 3)
         
         self.label_time = tk.Label (text = "Enter a time:")
-        self.label_time.pack (side = tk.LEFT)
+        self.label_time.grid (row = 1, column = 0) 
 
         self.inputs["entry_time"] = tk.StringVar ()
         self.inputs["entry_time"].set ("D:H:M:s")
         self.entry_time = tk.Entry (width = 25, textvariable = self.inputs["entry_time"])
-        self.entry_time.pack (side = tk.LEFT)
+        self.entry_time.grid (row = 1, column = 1)
 
         self.inputs["error_entry_time"] = tk.StringVar ()
         self.inputs["error_entry_time"].set ("Error")
         self.label_error_entry_time = tk.Label (textvariable = self.inputs["error_entry_time"], foreground = "red", font = "Times")
-        self.label_error_entry_time.pack (side = tk.LEFT)
+        self.label_error_entry_time.grid (row = 1, column = 2)
+        self.label_error_entry_time.grid_forget ()
 
         self.button_ok_time = tk.Button (text = "Ok", command = self.activate_timeout)
-        self.button_ok_time.pack (side = tk.RIGHT)
+        self.button_ok_time.grid (row = 2, column = 1)
         
 
     def get_time_entry (self):
@@ -56,14 +57,16 @@ class TimeoutUI:
 
         try:
             days, hours, minutes, seconds = self.get_time_entry ()
-
+            
+            self.label_error_entry_time.grid_forget ()
+            
             self.timeout = timeout.Timeout ()
             self.timeout.set_new_timeout (days, hours, minutes, seconds)
             self.timeout.activate_timeout ()
             self.update_clock ()
 
         except Exception:
-            pass
+            self.label_error_entry_time.grid (row = 1, column = 2)
             
 
     def update_clock (self):
