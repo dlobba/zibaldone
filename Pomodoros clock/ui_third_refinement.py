@@ -15,7 +15,7 @@ class TimeoutUI (tk.Frame):
         tk.Frame.__init__ (self, self.parent)
         self.grid (row = 0, column = 0)
         
-        self.inputs = dict() # set up a diction to contain references to \
+        self.inputs = dict() # set up a dictionary to contain references to \
                       # dynamic variables (stringvar and so on)
         
         self._job = None # define the timer job
@@ -33,21 +33,22 @@ class TimeoutUI (tk.Frame):
         
         self.button_ok_time = tk.Button (self, text = "Ok", command = self.activate_timeout)
 
-
         self.label_clock.grid (row = 0, column = 0, columnspan = 3, sticky = tk.N + tk.S + tk.E + tk.W)
         self.label_time.grid (row = 1, column = 0, sticky = tk.N + tk.S + tk.E + tk.W) 
         self.entry_time.grid (row = 1, column = 1, sticky = tk.N + tk.S + tk.E + tk.W)
         self.label_error_entry_time.grid (row = 1, column = 2, sticky = tk.N + tk.S + tk.E + tk.W)
         self.label_error_entry_time.grid_forget ()
         self.button_ok_time.grid (row = 2, column = 1, sticky = tk.N + tk.S + tk.E + tk.W)
-                
-        self.parent.rowconfigure (0, weight = 1)
+
+        # configure resize behaviour
+        self.parent.rowconfigure (0, weight = 10)
         self.parent.rowconfigure (1, weight = 1)
         self.parent.rowconfigure (2, weight = 1)
         
-        self.parent.columnconfigure (0, weight = 1)
+        self.parent.columnconfigure (0, weight = 10)
         self.parent.columnconfigure (1, weight = 1)
-        self.parent.columnconfigure (2, weight = 1)    
+        self.parent.columnconfigure (2, weight = 1)
+        
         
     def get_time_entry (self):
         tmp = self.inputs["entry_time"].get().split (":")
@@ -65,7 +66,6 @@ class TimeoutUI (tk.Frame):
         
         
     def activate_timeout (self):
-
         try:
             days, hours, minutes, seconds = self.get_time_entry ()
             
@@ -84,8 +84,8 @@ class TimeoutUI (tk.Frame):
             self.inputs["error_entry_time"].set ("You entered a character input")
             self.label_error_entry_time.grid (row = 1, column = 2)
 
+            
     def update_clock (self):
-
         if self._job:
             self.parent.after_cancel (self._job)
         
@@ -95,6 +95,7 @@ class TimeoutUI (tk.Frame):
             self._job = root.after (100, self.update_clock)
         else:
             self.label_clock.configure (text = "Timeout...")
+            self.show_timeout_popup ()
 
             
     def strftime (self, timeout_datetime):
@@ -105,7 +106,23 @@ class TimeoutUI (tk.Frame):
             str (hour) + ":" + \
             str (minutes) + ":" + \
             str (seconds)
+
     
+    def show_timeout_popup(self):
+        popup_root = tk.Toplevel ()
+        popup_root.title ("Step finished")
+        popup_root.resizable (False, False)
+
+        popup_label = tk.Label (popup_root, text = "Time has expired...\nEnjoy your pause!", \
+                                font = "Verdana 24")                            
+
+        popup_button = tk.Button (popup_root, text = "Done!", \
+                                  command = popup_root.destroy)
+        
+        popup_label.grid (row = 0, column = 0, sticky = tk.N + tk.S + tk.E + tk.W)
+        popup_button.grid (row = 1, column = 0, sticky = tk.N + tk.S + tk.E + tk.W)
+        popup_root.mainloop ()
+        
         
 root = tk.Tk()
 root.wm_title ("Pomodoro clock")
